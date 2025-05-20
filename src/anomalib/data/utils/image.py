@@ -307,7 +307,11 @@ def read_image(path: str | Path, as_tensor: bool = False) -> torch.Tensor | np.n
         >>> type(image)
         <class 'torch.Tensor'>
     """
-    image = Image.open(path).convert("RGB")
+    image = Image.open(path)
+    if image.mode == 'F':
+        image = np.array([image]*3).transpose([1,2,0])
+    else:
+        image = image.convert('RGB')
     return to_dtype(to_image(image), torch.float32, scale=True) if as_tensor else np.array(image) / 255.0
 
 
